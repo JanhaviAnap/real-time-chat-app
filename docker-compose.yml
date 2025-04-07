@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5
+    container_name: chat-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  server:
+    build: ./server
+    container_name: chat-server
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: chat-client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
